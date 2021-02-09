@@ -1,50 +1,59 @@
 import 'package:flutter/material.dart';
 
+import 'package:firebase_admob/firebase_admob.dart';
+
 void main() => runApp(MyApp());
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  static const MobileAdTargetingInfo targetingInfo = MobileAdTargetingInfo(
+    testDevices: ['testDevice'],
+  );
+
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  BannerAd createBannerAd() {
+    return BannerAd(
+      adUnitId: BannerAd.testAdUnitId,
+      size: AdSize.banner,
+      targetingInfo: MyApp.targetingInfo,
+      listener: (MobileAdEvent event) {
+        print('bannerAd $event');
+      },
+    );
+  }
+
+  BannerAd bannerAd;
+  @override
+  void initState() {
+    FirebaseAdMob.instance.initialize(
+      appId: BannerAd.testAdUnitId,
+    );
+    bannerAd = createBannerAd()
+      ..load()
+      ..show();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    bannerAd.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Material App',
-      debugShowCheckedModeBanner: false,
       home: Scaffold(
-        backgroundColor: Color(0xff0A0026),
+        appBar: AppBar(
+          title: Text('Material App Bar'),
+        ),
         body: Center(
           child: Container(
-            padding: EdgeInsets.all(30),
-            child: TextField(
-              cursorColor: Colors.white,
-              style: TextStyle(
-                color: Color(0xffD0B9DB),
-              ),
-              decoration: InputDecoration(
-                labelText: 'EMAIL',
-                labelStyle: TextStyle(
-                  color: Colors.white,
-                ),
-                prefixIcon: Icon(
-                  Icons.lock_open,
-                  color: Colors.white,
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Colors.white,
-                  ),
-                  borderRadius: BorderRadius.circular(
-                    12,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Colors.white,
-                  ),
-                  borderRadius: BorderRadius.circular(
-                    12,
-                  ),
-                ),
-              ),
-            ),
+            child: Text('Hello World'),
           ),
         ),
       ),
